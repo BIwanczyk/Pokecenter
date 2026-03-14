@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pokecenter – panel trenera</title>
+
+  <!-- Główny styl całego GUI -->
+  <link rel="stylesheet" href="./styles.css?v=18"/>
+  <!-- Konfiguracja ładowana przed app.js -->
+  <script defer src="./config.js?v=18"></script>
+  <!-- Logika GUI: -->
+  <script defer src="./config.js?v=18"></script>
+  <script type="module" src="./app.js?v=18"></script>
+
+</head>
+
+<body>
+<!-- Audio w tle-->
+<audio id="bgm" src="./assets/from-peak-to-peak.mp3" preload="auto" loop></audio>
+
+<!-- Ekran wyboru rejestracji i logowania -->
+<div id="choiceBackdrop" class="modal-backdrop">
+  <div class="modal">
+    <h2>Witaj w panelu trenera</h2>
+    <p>Wybierz co chcesz zrobić.</p>
+    <div class="actions" style="justify-content:center">
+      <!-- Przycisk przejścia do modala logowania. -->
+      <button id="btnGoLogin">Zaloguj</button>
+      <!-- Przycisk przejścia do modala rejestracji. -->
+      <button id="btnGoRegister">Zarejestruj</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal logowania --- po submit appjs wyszukuje użytkownika po emailu i loguje do localStorage. -->
+<div id="loginBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Zaloguj się</h2>
+    <form id="loginForm" class="form">
+      <input id="loginEmail" type="email" placeholder="Email" required/>
+      <input id="loginPassword" type="password" placeholder="Hasło"/>
+      <div class="actions">
+        <!-- Powrót do ekranu startowego. -->
+        <button type="button" id="loginBack">Wstecz</button>
+        <!-- Submit logowania -->
+        <button type="submit">Zaloguj</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal rejestracji trenera tworzy konto POST do backendu -->
+<div id="registerBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Rejestracja</h2>
+    <p>Utwórz swoje konto</p>
+    <form id="registerForm" class="form">
+      <div class="grid-2">
+        <div>
+          <label for="firstName">Imię</label>
+          <input id="firstName" type="text" placeholder="np. Ash" required/>
+        </div>
+        <div>
+          <label for="lastName">Nazwisko</label>
+          <input id="lastName" type="text" placeholder="np. Ketchum" required/>
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="np. ash@poke.com" required/>
+        </div>
+        <div>
+          <label for="password">Hasło</label>
+          <input id="password" type="password" placeholder="••••••••" />
+        </div>
+
+        <div>
+          <label for="age">Wiek</label>
+          <input id="age" type="number" min="1" placeholder="np. 15" required/>
+        </div>
+        <div>
+          <label for="badgeCount">Ilość odznak</label>
+          <input id="badgeCount" type="number" min="0" placeholder="np. 3"/>
+        </div>
+
+        <div class="col-span-2">
+          <label for="phone">Telefon</label>
+          <input id="phone" type="text" placeholder="np. 000-000-000"/>
+        </div>
+      </div>
+
+      <div class="actions">
+        <!-- Powrót do ekranu startowego. -->
+        <button type="button" id="registerBack">Wstecz</button>
+        <!-- Submit rejestracji -->
+        <button type="submit">Zarejestruj</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Główny layout po zalogowaniu -->
+<div id="appRoot" class="container hidden">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="header">
+      <h1>Ośrodki</h1>
+      <!-- Licznik ilości ośrodków ładowany w loadPokecenters(). -->
+      <small id="countPc"></small>
+    </div>
+
+    <!-- Pole wyszukiwania ośrodków -->
+    <div class="search"><input id="searchPc" placeholder="Szukaj po lokalizacji/nazwie"/></div>
+
+    <!-- Lista ośrodków -->
+    <div id="pcList" class="list" role="listbox" aria-label="Lista ośrodków"></div>
+
+    <div class="actions" style="margin-top:8px">
+      <!-- Otwiera modal wyboru ośrodka -->
+      <button id="pcChooseOpen" class="btn-primary">Wybierz ośrodek</button>
+    </div>
+  </aside>
+
+  <!-- menu oraz przycisk wylogowania -->
+  <main class="content">
+    <div class="topbar">
+      <!-- Czyści localStorage i wraca do ekranu startowego -->
+      <button class="btn-out" id="globalLogout">Wyloguj</button>
+    </div>
+
+    <!-- Główne menu funkcji dostępnych po zalogowaniu -->
+    <div class="menu-stack">
+      <h1>Co chcesz zrobić?</h1>
+      <!-- modal profilu i renderuje dane użytkownika. -->
+      <div class="btn-wrap"><button class="menu-btn" id="btnProfile">Wyświetl dane osobowe</button></div>
+      <!-- modal potwierdzenia zakupu ubezpieczenia w wybranym pokecenter -->
+      <div class="btn-wrap"><button class="menu-btn" id="btnBuyInsurance">Kup ubezpieczenie</button></div>
+      <!-- flow turniejów -->
+      <div class="btn-wrap"><button class="menu-btn" id="btnTournament">Zapisz na turniej</button></div>
+      <!-- kreator eventów -->
+      <div class="btn-wrap"><button class="menu-btn" id="btnCreateEvent">Stwórz event</button></div>
+      <!-- funkcje sklepu  -->
+      <div class="btn-wrap"><button class="menu-btn" id="btnShop">Sklep</button></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal wyboru rodzaju turnieju przed pokazaniem listy eventów -->
+<div id="tournamentBackdrop" class="modal-backdrop hidden">
+  <div class="modal" style="width:min(520px,92vw)">
+    <h2>Wybierz rodzaj turnieju</h2>
+    <p>Wybierz, na jaki turniej chcesz się zapisać.</p>
+    <div class="actions" style="justify-content:center">
+      <!-- Przejście do openEventSelect. -->
+      <button id="btnTournamentPrivate">Turniej prywatny</button>
+      <!-- Public -->
+      <button id="btnTournamentPublic">Turniej publiczny</button>
+      <!-- Zamyka modal wyboru rodzaju. -->
+      <button id="tournamentClose">Anuluj</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal z selectem eventów i przyciskami Info/Zapisz/Wypisz -->
+<div id="eventSelectBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2 id="eventSelectTitle">Wybierz turniej</h2>
+    <div class="form">
+      <label for="eventSelect">Lista turniejów</label>
+      <!-- budowanie dynamicznie opcji z fetchEvents(kind) -->
+      <select id="eventSelect"></select>
+    </div>
+    <div class="actions">
+      <button id="eventSelectCancel">Anuluj</button>
+      <!-- Otwiera szczegóły turnieju renderEventInfoModal -->
+      <button id="eventInfo" class="btn-primary" disabled>Informacje</button>
+      <!-- Rejestracja trenera na event POST /events/{id}/register -->
+      <button id="eventRegister" class="btn-primary" disabled>Zapisz</button>
+      <!-- Wypis trenera z eventu, aktywne tylko gdy trener jest zapisany. -->
+      <button id="eventUnregister">Wypisz</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal szczegółów turnieju -->
+<div id="eventInfoBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Szczegóły turnieju</h2>
+    <div id="eventInfoBody" style="margin-top:8px">
+      <div style="color:#94a3b8">Ładowanie…</div>
+    </div>
+    <div class="actions">
+      <button id="eventInfoClose">Zamknij</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal potwierdzenia ubezpieczenia -->
+<div id="insuranceConfirmBackdrop" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:520px">
+    <h2>Kup ubezpieczenie?</h2>
+    <p id="insuranceConfirmText">Czy chcesz aktywować ubezpieczenie dla swojego konta trenerskiego?</p>
+    <p id="insuranceConfirmPc" style="margin-top:-6px;color:var(--muted)">
+      Ubezpieczenie zostanie kupione w ośrodku: <strong id="insuranceConfirmPcName">—</strong>
+    </p>
+    <div class="actions" style="justify-content:flex-end">
+      <button id="insuranceNo">Nie</button>
+      <button id="insuranceYes">Tak</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal profilu -->
+<div id="profileBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Dane trenera</h2>
+    <div id="profileBody" style="margin-top:8px">
+      <div style="color:#94a3b8">Ładowanie…</div>
+    </div>
+    <div class="actions">
+      <button id="profileClose">Zamknij</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal wyboru pokecenter -->
+<div id="pcSelectBackdrop" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Wybierz ośrodek</h2>
+    <div class="form">
+      <label for="pcSelect">Lista ośrodków</label>
+      <!-- Opcje są wypełniane przez populatePcSelect() -->
+      <select id="pcSelect"></select>
+    </div>
+    <div class="actions">
+      <button id="pcSelectCancel">Anuluj</button>
+      <button id="pcSelectChoose">Zatwierdź</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal tworzenia eventu -->
+<div id="createEventBackdrop" class="modal-backdrop hidden">
+  <div class="modal" id="createChoiceModal" style="width:min(640px,92vw); background:#0f172a">
+
+    <!--wybór rodzaju eventu -->
+    <div class="simple-choice" id="ceStepChoice">
+      <div style="position:absolute;right:16px;top:12px"></div>
+      <button id="ceChoosePrivate" class="choice-tile">Prywatny</button>
+      <button id="ceChoosePublic" class="choice-tile">Publiczny</button>
+      <div class="ce-actions" style="justify-content:flex-end;width:100%;margin-top:8px">
+        <button type="button" class="btn-secondary" id="ceChoiceCancel">Anuluj</button>
+      </div>
+    </div>
+
+    <!--formularz tworzenia eventu publicznego -->
+    <form id="ceStepPublic" class="ce-form hidden">
+      <h3>Nowy event publiczny</h3>
+      <label>Nazwa
+        <input id="cePubName" type="text" required />
+      </label>
+      <label>Data
+        <input id="cePubDate" type="date" required />
+      </label>
+      <label>Ilość uczestników
+        <input id="cePubMaxP" type="number" min="1" step="1" required />
+      </label>
+      <label>Ilość widzów
+        <input id="cePubAudience" type="number" min="0" step="1" required />
+      </label>
+      <label>Pokecenter
+        <!-- Select pokecenterów jest wypełniany w JS (fillPokecenterSelect / populate). -->
+        <select id="cePubPC" required>
+          <option value="" disabled selected>Wybierz pokecenter…</option>
+        </select>
+      </label>
+
+      <div class="ce-actions">
+        <button type="button" class="btn-secondary" id="ceBackFromPublic">Wstecz</button>
+        <button type="submit" class="btn-primary">Utwórz</button>
+      </div>
+    </form>
+
+    <!--formularz tworzenia eventu prywatnego -->
+    <form id="ceStepPrivate" class="ce-form hidden">
+      <h3>Nowy event prywatny</h3>
+      <label>Nazwa
+        <input id="cePrivName" type="text" required />
+      </label>
+      <label>Data
+        <input id="cePrivDate" type="date" required />
+      </label>
+      <label>Ilość uczestników
+        <input id="cePrivMaxP" type="number" min="1" step="1" required />
+      </label>
+      <label>Pokecenter
+        <select id="cePrivPC" required>
+          <option value="" disabled selected>Wybierz pokecenter…</option>
+        </select>
+      </label>
+
+      <div class="ce-actions">
+        <button type="button" class="btn-secondary" id="ceBackFromPrivate">Wstecz</button>
+        <button type="submit" class="btn-primary">Utwórz</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

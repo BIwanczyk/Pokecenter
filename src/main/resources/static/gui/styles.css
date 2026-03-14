@@ -1,0 +1,632 @@
+/* =========================
+   Theme / Variables
+   ========================= */
+:root {
+  --bg: #0f172a;
+  --panel: #0f172a;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #60a5fa;
+  --stroke: rgba(255, 255, 255, 0.08);
+}
+
+/* =========================
+   Base / Reset
+   ========================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, Ubuntu;
+  color: var(--text);
+  background:
+          radial-gradient(1200px 800px at 0% 0%, rgba(96, 165, 250, 0.10), transparent 50%),
+          var(--bg);
+}
+
+/* =========================
+   Layout
+   ========================= */
+.container {
+  display: flex;
+  gap: 0;
+  height: 100vh;
+}
+
+.sidebar {
+  position: relative;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: #000;
+  background-image: url("./assets/sidepanel3.png");
+  background-size: cover;
+  background-position: left top;
+  background-repeat: no-repeat;
+
+  border-right: 1px solid var(--stroke);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #000;
+  background-image: url("./assets/pokemonMainscreen.jpg");
+  background-size: cover;
+  background-position: left top;
+  background-repeat: no-repeat;
+}
+
+.sidebar::before {
+  content: none !important;
+  display: none !important;
+}
+
+/*
+   Sidebar: header / list
+ */
+.header {
+  padding: 16px;
+  border-bottom: 1px solid var(--stroke);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.header small {
+  color: var(--muted);
+}
+
+.search {
+  padding: 12px 16px;
+}
+
+.search input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: #0b1220;
+  color: var(--text);
+  outline: none;
+}
+
+.list {
+  overflow: auto;
+  padding: 12px 12px 20px;
+}
+
+.item {
+  padding: 12px;
+  margin-bottom: 10px;
+
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  cursor: pointer;
+}
+
+.item:hover {
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.item.active {
+  outline: 2px solid var(--accent);
+}
+
+.item .title {
+  font-weight: 600;
+}
+
+.item .sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Twoje ukrycia */
+.sidebar .search {
+  display: none;
+}
+
+#pcList {
+  display: none;
+}
+
+/* Sidebar: centralny przycisk wyboru */
+.sidebar .actions {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 16px 20px !important;
+}
+
+#pcChooseOpen {
+  position: static;
+  transform: none;
+
+  display: inline-block;
+  min-width: 70%;
+  padding: 14px 18px;
+
+  border-radius: 9999px;
+  outline: none;
+
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+
+  transition: outline-color 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease;
+}
+
+/*
+   Topbar / Main menu
+*/
+.topbar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-out {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: #111827;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn-out:hover {
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.menu-stack {
+  width: min(760px, 92vw);
+  padding: 28px 26px;
+  text-align: center;
+
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 22px;
+
+  backdrop-filter: blur(2px);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55);
+}
+
+.menu-stack h1 {
+  margin: 0 0 22px;
+  font-size: 44px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.btn-wrap {
+  position: relative;
+  margin: 18px 0;
+}
+
+.btn-wrap::before {
+  content: "";
+  position: absolute;
+  inset: auto 4%;
+  top: 50%;
+  height: 28px;
+
+  transform: translateY(-50%);
+  border-radius: 999px;
+
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, 0.35), transparent 70%);
+  filter: blur(14px);
+}
+
+.menu-btn {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  padding: 14px 18px;
+
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+
+  background: #111827;
+  color: var(--text);
+
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.menu-btn:hover {
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/*
+   Modals
+ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.6);
+
+  pointer-events: auto;
+}
+
+.modal {
+  width: min(720px, 92vw);
+  padding: 16px;
+
+  background: #111827;
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.modal h2 {
+  margin: 0 0 8px;
+}
+
+.modal p {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+/* Modal actions */
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/*
+   Forms / Tables
+ */
+.form {
+  display: grid;
+  gap: 8px;
+}
+
+.form label {
+  display: block;
+  margin: 6px 0 6px;
+  color: var(--muted);
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.form input,
+.form button,
+.form select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: #0b1220;
+  color: var(--text);
+}
+
+select {
+  appearance: none;
+  background-image:
+          linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+          linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+          calc(100% - 20px) calc(1em + 2px),
+          calc(100% - 15px) calc(1em + 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.table th,
+.table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--stroke);
+  text-align: left;
+}
+
+.table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Date inputs fix */
+#ceDate,
+input[type="date"],
+input[type="datetime-local"] {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 2;
+}
+
+/*
+   Utility grids
+ */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.col-span-2 {
+  grid-column: 1 / -1;
+}
+
+/*
+   Choice screen tiles
+ */
+.simple-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 72px;
+  padding: 40px 24px;
+}
+
+.choice-tile {
+  width: 260px;
+  height: 120px;
+
+  background: #fff;
+  color: #111827;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.choice-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+.choice-tile:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+/*
+   Create Event form (ce-*)
+ */
+.ce-form {
+  padding: 22px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ce-form h3 {
+  color: #e5e7eb;
+  margin: 0 0 6px;
+}
+
+.ce-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  color: #cbd5e1;
+  font-size: 14px;
+}
+
+.ce-form input,
+.ce-form select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background: #0b1222;
+  color: #e5e7eb;
+}
+
+.ce-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/*globalne nadpisania dla buttonów */
+.btn-primary {
+  background: #22c55e;
+  color: #0a0a0a;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-primary.is-blocked,
+.btn-primary[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #1f2937;
+  color: #e5e7eb;
+  border: 1px solid #374151;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/*
+   Special backdrops (login/register/choice) */
+#choiceBackdrop,
+#loginBackdrop,
+#registerBackdrop {
+  background-color: transparent;
+  background-image: url("./assets/Pokemonwallpaper.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+#choiceBackdrop::before,
+#loginBackdrop::before,
+#registerBackdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: rgba(2, 6, 23, 0.68);
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+
+#choiceBackdrop > .modal,
+#loginBackdrop > .modal,
+#registerBackdrop > .modal {
+  position: relative;
+  z-index: 1;
+
+  background: #000 !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65) !important;
+}
+
+#choiceBackdrop .modal input,
+#loginBackdrop .modal input,
+#registerBackdrop .modal input,
+#registerBackdrop .modal select {
+  background: #0b0b0b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+#choiceBackdrop .modal p,
+#loginBackdrop .modal p,
+#registerBackdrop .modal p {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Modal inputs (global override like in your file) */
+.modal-backdrop > .modal {
+  background: #000 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.modal .form input,
+.modal .form select,
+.modal .ce-form input,
+.modal .ce-form select {
+  background: #0b0b0b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+/*
+   Global button overrides
+ */
+button,
+input[type="button"],
+input[type="submit"],
+.menu-btn,
+.btn-out,
+.btn-primary,
+.btn-secondary,
+.choice-tile,
+#pcChooseOpen {
+  background: #000 !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+.menu-btn:hover,
+.btn-out:hover,
+.btn-primary:hover,
+.btn-secondary:hover,
+.choice-tile:hover,
+#pcChooseOpen:hover {
+  background: #111 !important;
+  border-color: rgba(96, 165, 250, 0.35) !important;
+}
+
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+.menu-btn:active,
+.btn-out:active,
+.btn-primary:active,
+.btn-secondary:active,
+.choice-tile:active,
+#pcChooseOpen:active {
+  background: #161616 !important;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+button[aria-disabled="true"],
+.btn-primary.is-blocked,
+.btn-primary[aria-disabled="true"] {
+  background: #111 !important;
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+}
+
+#bgm {
+  display: none;
+}
